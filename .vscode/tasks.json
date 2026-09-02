@@ -1,0 +1,19 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build (Windows)",
+            "type": "shell",
+            "command": "powershell.exe –NonInteractive –ExecutionPolicy Unrestricted -file '${workspaceRoot}\\.scripts\\build.ps1' -srcDirectory '${workspaceRoot}' -sdkPath '${config:xcom.highlander.sdkroot}' -gamePath '${config:xcom.highlander.gameroot}' -config default",
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "Build (Linux)",
+            "type": "shell",
+            "command": "WINEPREFIX=\"${config:xcom.dev.winepfx}\" WINEDEBUG=-all pwsh –NonInteractive –ExecutionPolicy Unrestricted -file '${workspaceRoot}\\.scripts\\build.ps1' -srcDirectory '${workspaceRoot}' -sdkPath '${config:xcom.highlander.sdkroot}' -gamePath '${config:xcom.highlander.gameroot}' -config default",
+            "group": "build",
+            "problemMatcher": []
+        }
+    ]
+}
