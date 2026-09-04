@@ -23,6 +23,8 @@ struct StatsDisplayMapping
 var config array<StatsPositionProfile> PositionProfiles;
 var config array<StatsDisplayMapping> DisplayMappings;
 
+var config bool ShowEquipmentBonus;
+
 var UIPanel BG;
 var UIX2PanelHeader Header;
 var UIStatList StatsList;
@@ -227,6 +229,11 @@ simulated function string GetCurrentAndMax(ECharStatType Stat)
 simulated function string GetEquipmentBonus(ECharStatType Stat)
 {
 	local int Bonus;
+
+	if (!default.ShowEquipmentBonus)
+	{
+		return "";
+	}
 
 	Bonus = GetUnit().GetUIStatFromInventory(Stat);
 
