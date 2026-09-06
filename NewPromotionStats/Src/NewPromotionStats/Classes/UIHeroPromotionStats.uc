@@ -166,67 +166,106 @@ simulated function array<UISummary_ItemStat> GetStats()
 	}
 
 	StatsEntry.Label = class'UISoldierHeader'.default.m_strHealthLabel;
-	StatsEntry.Value = GetCurrentAndMax(eStat_HP);
+	StatsEntry.Value = FormatStat(eStat_HP);
 	StatsEntry.ValueState = EUIState(Unit.GetStatusUIState());
 	Stats.AddItem(StatsEntry);
 
 	StatsEntry.Label = class'UISoldierHeader'.default.m_strWillLabel;
-	StatsEntry.Value = GetCurrentAndMax(eStat_Will);
+	StatsEntry.Value = FormatStat(eStat_Will);
 	StatsEntry.ValueState = Unit.GetMentalStateUIState();
 	Stats.AddItem(StatsEntry);
 
 	StatsEntry.Label = class'UISoldierHeader'.default.m_strAimLabel;
-	StatsEntry.Value = GetCurrent(eStat_Offense);
+	StatsEntry.Value = FormatStat(eStat_Offense);
 	StatsEntry.ValueState = eUIState_Normal;
 	Stats.AddItem(StatsEntry);
 
 	StatsEntry.Label = class'UISoldierHeader'.default.m_strMobilityLabel;
-	StatsEntry.Value = GetCurrent(eStat_Mobility);
+	StatsEntry.Value = FormatStat(eStat_Mobility);
 	Stats.AddItem(StatsEntry);
 
 	StatsEntry.Label = class'UISoldierHeader'.default.m_strTechLabel;
-	StatsEntry.Value = GetCurrent(eStat_Hacking);
+	StatsEntry.Value = FormatStat(eStat_Hacking);
 	Stats.AddItem(StatsEntry);
 
 	StatsEntry.Label = class'UISoldierHeader'.default.m_strArmorLabel;
-	StatsEntry.Value = GetCurrent(eStat_ArmorMitigation);
+	StatsEntry.Value = FormatStat(eStat_ArmorMitigation);
 	Stats.AddItem(StatsEntry);
 
 	StatsEntry.Label = class'UISoldierHeader'.default.m_strDodgeLabel;
-	StatsEntry.Value = GetCurrent(eStat_Dodge);
+	StatsEntry.Value = FormatStat(eStat_Dodge);
 	Stats.AddItem(StatsEntry);
 
 	StatsEntry.Label = class'XLocalizedData'.default.DefenseLabel;
-	StatsEntry.Value = GetCurrent(eStat_Defense);
+	StatsEntry.Value = FormatStat(eStat_Defense);
 	Stats.AddItem(StatsEntry);
 
 	StatsEntry.Label = class'UISoldierHeader'.default.m_strPsiLabel;
-	StatsEntry.Value = GetCurrent(eStat_PsiOffense);
+	StatsEntry.Value = FormatStat(eStat_PsiOffense);
 	Stats.AddItem(StatsEntry);
 
 	return Stats;
 }
 
-simulated function string GetCurrentOnly(ECharStatType Stat)
+simulated function int GetStatCurrent(ECharStatType Stat)
 {
 	local XComGameState_Unit Unit;
-	
+
 	Unit = GetUnit();
 
-	return string(int(Unit.GetCurrentStat(Stat)) + Unit.GetUIStatFromAbilities(Stat));
+	return int(Unit.GetCurrentStat(Stat)) + Unit.GetUIStatFromAbilities(Stat);
 }
 
-simulated function string GetCurrent(ECharStatType Stat)
+simulated function int GetStatMax(ECharStatType Stat)
 {
-	return GetCurrentOnly(Stat) $ GetEquipmentBonus(Stat);
+	return GetUnit().GetMaxStat(Stat);
 }
 
-simulated function string GetCurrentAndMax(ECharStatType Stat)
+simulated function int GetStatDelta(ECharStatType Stat)
 {
-	return GetCurrentOnly(Stat) $ "/" $ string(int(GetUnit().GetMaxStat(Stat))) $ GetEquipmentBonus(Stat);
+	local int BaseStat, UnitStat, ProgressedStat, Rank, i, j;
+	local array<SoldierClassStatType> StatProgression;
+
+	UnitStat = GetUnit().GetCurrentStat(Stat);
+	BaseStat = int(GetUnit().GetMyTemplate().CharacterBaseStats[Stat]);
+	ProgressedStat = BaseStat;
+	Rank = GetUnit().GetRank();
+
+	for (i = 0; i < Rank; i++)
+	{
+		StatProgression = GetUnit().GetSoldierClassTemplate().GetStatProgression(i);
+		for (j = 0; j < StatProgression.Length; j++)
+		{
+			if (StatProgression[j].StatType == Stat)
+			{
+				ProgressedStat += StatProgression[j].StatAmount;
+			}
+		}
+	}
+
+	return UnitStat - ProgressedStat;
 }
 
-simulated function string GetEquipmentBonus(ECharStatType Stat)
+simulated function string FormatStat(ECharStatType Stat)
+{
+	return GetStatCurrent(Stat) $ "/" $ string(GetStatMax(Stat)) $ FormatStatDelta(Stat) $ FormatEquipmentBonus(Stat);
+}
+
+simulated function string FormatStatDelta(ECharStatType Stat)
+{
+	local int Delta;
+
+	Delta = GetStatDelta(Stat);
+
+	if (Delta >= 0)
+	{
+		return "(+" $ Delta $ ")";
+	}
+
+	return "(" $ Delta $ ")";
+}
+
+simulated function string FormatEquipmentBonus(ECharStatType Stat)
 {
 	local int Bonus;
 
