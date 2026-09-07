@@ -1,4 +1,4 @@
-class UIHeroPromotionStats extends UIPanel config(UI);
+class UIHeroPromotionStats extends UIPanel config(NewPromotionStats);
 
 struct StatsPositionProfile
 {
@@ -22,6 +22,8 @@ struct StatsDisplayMapping
 
 var config array<StatsPositionProfile> PositionProfiles;
 var config array<StatsDisplayMapping> DisplayMappings;
+
+var config array<ECharStatType> StatsToShow;
 
 var config bool ShowEquipmentBonus;
 
@@ -154,6 +156,7 @@ simulated protected function UpdatePositionFromProfile()
 simulated function array<UISummary_ItemStat> GetStats()
 {
 	local array<UISummary_ItemStat> Stats;
+	local ECharStatType Stat;
 	local UISummary_ItemStat StatsEntry;
 	local XComGameState_Unit Unit;
 
@@ -165,44 +168,34 @@ simulated function array<UISummary_ItemStat> GetStats()
 		return Stats;
 	}
 
-	StatsEntry.Label = class'UISoldierHeader'.default.m_strHealthLabel;
-	StatsEntry.Value = FormatStat(eStat_HP);
-	StatsEntry.ValueState = EUIState(Unit.GetStatusUIState());
-	Stats.AddItem(StatsEntry);
+	foreach default.StatsToShow(Stat)
+	{
+		switch (Stat)
+		{
+			case eStat_ArmorMitigation:
+				StatsEntry.Label = class'UISoldierHeader'.default.m_strArmorLabel;
+				break;
+			default:
+				StatsEntry.Label = class'X2TacticalGameRulesetDataStructures'.default.m_aCharStatLabels[Stat];
+		}
 
-	StatsEntry.Label = class'UISoldierHeader'.default.m_strWillLabel;
-	StatsEntry.Value = FormatStat(eStat_Will);
-	StatsEntry.ValueState = Unit.GetMentalStateUIState();
-	Stats.AddItem(StatsEntry);
+		StatsEntry.Value = FormatStat(Stat);
 
-	StatsEntry.Label = class'UISoldierHeader'.default.m_strAimLabel;
-	StatsEntry.Value = FormatStat(eStat_Offense);
-	StatsEntry.ValueState = eUIState_Normal;
-	Stats.AddItem(StatsEntry);
+		switch (Stat)
+		{
+			case eStat_HP:
+				StatsEntry.ValueState = EUIState(Unit.GetStatusUIState());
+				break;
+			case eStat_Will:
+				StatsEntry.ValueState = Unit.GetMentalStateUIState();
+				break;
+			default:
+				StatsEntry.ValueState = eUIState_Normal;
+		}
 
-	StatsEntry.Label = class'UISoldierHeader'.default.m_strMobilityLabel;
-	StatsEntry.Value = FormatStat(eStat_Mobility);
-	Stats.AddItem(StatsEntry);
+		Stats.AddItem(StatsEntry);
+	}
 
-	StatsEntry.Label = class'UISoldierHeader'.default.m_strTechLabel;
-	StatsEntry.Value = FormatStat(eStat_Hacking);
-	Stats.AddItem(StatsEntry);
-
-	StatsEntry.Label = class'UISoldierHeader'.default.m_strArmorLabel;
-	StatsEntry.Value = FormatStat(eStat_ArmorMitigation);
-	Stats.AddItem(StatsEntry);
-
-	StatsEntry.Label = class'UISoldierHeader'.default.m_strDodgeLabel;
-	StatsEntry.Value = FormatStat(eStat_Dodge);
-	Stats.AddItem(StatsEntry);
-
-	StatsEntry.Label = class'XLocalizedData'.default.DefenseLabel;
-	StatsEntry.Value = FormatStat(eStat_Defense);
-	Stats.AddItem(StatsEntry);
-
-	StatsEntry.Label = class'UISoldierHeader'.default.m_strPsiLabel;
-	StatsEntry.Value = FormatStat(eStat_PsiOffense);
-	Stats.AddItem(StatsEntry);
 
 	return Stats;
 }
@@ -226,7 +219,7 @@ simulated function int GetStatDelta(ECharStatType Stat)
 	local int BaseStat, UnitStat, ProgressedStat, Rank, i, j;
 	local array<SoldierClassStatType> StatProgression;
 
-	UnitStat = GetUnit().GetCurrentStat(Stat);
+	UnitStat = GetStatMax(Stat);
 	BaseStat = int(GetUnit().GetMyTemplate().CharacterBaseStats[Stat]);
 	ProgressedStat = BaseStat;
 	Rank = GetUnit().GetRank();
