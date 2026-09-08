@@ -25,6 +25,8 @@ var config array<StatsDisplayMapping> DisplayMappings;
 
 var config array<ECharStatType> StatsToShow;
 
+var config int ShowStatCurrent;
+var config bool ShowStatDelta;
 var config bool ShowEquipmentBonus;
 
 var UIPanel BG;
@@ -241,12 +243,45 @@ simulated function int GetStatDelta(ECharStatType Stat)
 
 simulated function string FormatStat(ECharStatType Stat)
 {
-	return GetStatCurrent(Stat) $ "/" $ string(GetStatMax(Stat)) $ FormatStatDelta(Stat) $ FormatEquipmentBonus(Stat);
+	return FormatStatCurrent(Stat) $ string(GetStatMax(Stat)) $ FormatStatDelta(Stat) $ FormatEquipmentBonus(Stat);
+}
+
+simulated function string FormatStatCurrent(ECharStatType Stat)
+{
+	local int Current;
+
+	Current = GetStatCurrent(Stat);
+
+	// Never show
+	if (default.ShowStatCurrent == 0)
+	{
+		return "";
+	}
+
+	// Always show
+	if (default.ShowStatCurrent == 1)
+	{
+		return Current $ "/";
+	}
+
+	// Show if different
+	if (Current != GetStatMax(Stat))
+	{
+		return Current $ "/";
+	}
+
+	return "";
+
 }
 
 simulated function string FormatStatDelta(ECharStatType Stat)
 {
 	local int Delta;
+
+	if (!default.ShowStatDelta)
+	{
+		return "";
+	}
 
 	Delta = GetStatDelta(Stat);
 
