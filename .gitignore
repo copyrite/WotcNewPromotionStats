@@ -1,0 +1,4 @@
+*.lnk
+BuildCache/
+*.v12.XCOM_suo
+PublishedFileId.ID
