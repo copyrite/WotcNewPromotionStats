@@ -292,12 +292,17 @@ simulated function string FormatStatDelta(ECharStatType Stat)
 
 	Delta = GetStatDelta(Stat);
 
-	if (Delta >= 0)
+	if (Delta == 0)
 	{
-		return "(+" $ Delta $ ")";
+		return class'UIUtilities_Text'.static.GetColoredText("(+0)", eUIState_Normal);
 	}
 
-	return "(" $ Delta $ ")";
+	if (Delta >= 0)
+	{
+		return class'UIUtilities_Text'.static.GetColoredText("(+" $ Delta $ ")", eUIState_Good);
+	}
+
+	return class'UIUtilities_Text'.static.GetColoredText("(" $ Delta $ ")", eUIState_Bad);
 }
 
 simulated function string FormatEquipmentBonus(ECharStatType Stat)
