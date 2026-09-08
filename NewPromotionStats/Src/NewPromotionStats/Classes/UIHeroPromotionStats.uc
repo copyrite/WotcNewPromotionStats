@@ -24,6 +24,7 @@ var config array<StatsPositionProfile> PositionProfiles;
 var config array<StatsDisplayMapping> DisplayMappings;
 
 var config array<ECharStatType> StatsToShow;
+var config array<ECharStatType> StatsWithCurrent;
 
 var config int ShowStatCurrent;
 var config bool ShowStatDelta;
@@ -254,6 +255,12 @@ simulated function string FormatStatCurrent(ECharStatType Stat)
 
 	// Never show
 	if (default.ShowStatCurrent == 0)
+	{
+		return "";
+	}
+
+	// Don't show if not specific current
+	if (default.StatsWithCurrent.Find(Stat) == INDEX_NONE)
 	{
 		return "";
 	}
