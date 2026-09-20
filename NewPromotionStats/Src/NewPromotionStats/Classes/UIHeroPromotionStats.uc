@@ -279,9 +279,34 @@ simulated function string FormatStatCurrent(ECharStatType Stat)
 
 }
 
+function string AddBraces(string str)
+{
+	return "(" $ str $ ")";
+}
+
+function string MaybeMarkPCS(string str, bool b)
+{
+	if (!`GETMCMVAR(MarkStatsModifiedByPCS))
+	{
+		return str;
+	}
+
+	if (!b)
+	{
+		return str;
+	}
+
+	return str $ "*";
+}
+
 simulated function string FormatStatDelta(ECharStatType Stat)
 {
 	local int Delta;
+	local bool StatModifiedByPCS;
+	local XComGameState_Unit UnitState;
+	local XComGameState_Item ItemState;
+	local array<XComGameState_Item> PCSStates;
+	local StatBoost Boost;
 
 	if (!`GETMCMVAR(ShowStatDelta))
 	{
@@ -289,18 +314,38 @@ simulated function string FormatStatDelta(ECharStatType Stat)
 	}
 
 	Delta = GetStatDelta(Stat);
+	UnitState = GetUnit();
+	PCSStates = UnitState.GetAllItemsInSlot(eInvSlot_CombatSim);
+	StatModifiedByPCS = false;
+
+	foreach PCSStates(ItemState)
+	{
+		if (StatModifiedByPCS)
+		{
+			break;
+		}
+
+		foreach ItemState.StatBoosts(Boost)
+		{
+			if (Boost.StatType == Stat)
+			{
+				StatModifiedByPCS = true;
+				break;
+			}
+		}
+	}
 
 	if (Delta == 0)
 	{
-		return class'UIUtilities_Text'.static.GetColoredText("(+0)", eUIState_Normal);
+		return class'UIUtilities_Text'.static.GetColoredText(AddBraces(MaybeMarkPCS("+0", StatModifiedByPCS)), eUIState_Normal);
 	}
 
 	if (Delta >= 0)
 	{
-		return class'UIUtilities_Text'.static.GetColoredText("(+" $ Delta $ ")", eUIState_Good);
+		return class'UIUtilities_Text'.static.GetColoredText(AddBraces(MaybeMarkPCS("+" $ Delta, StatModifiedByPCS)), eUIState_Good);
 	}
 
-	return class'UIUtilities_Text'.static.GetColoredText("(" $ Delta $ ")", eUIState_Bad);
+	return class'UIUtilities_Text'.static.GetColoredText(AddBraces(MaybeMarkPCS(string(Delta), StatModifiedByPCS)), eUIState_Bad);
 }
 
 simulated function string FormatEquipmentBonus(ECharStatType Stat)

@@ -14,3 +14,6 @@ ShowStatDelta_Tip="Whether stat deltas, i.e. differences against normal stat gro
 
 ShowEquipmentBonus_Label="Show equipment bonus"
 ShowEquipmentBonus_Tip="Whether the stat bonuses from equipment should be shown."
+
+MarkStatsModifiedByPCS_Label="Mark PCS-modified stats"
+MarkStatsModifiedByPCS_Tip="Show a * symbol in the delta of stats that have been modified by a PCS"

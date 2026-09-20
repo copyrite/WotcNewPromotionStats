@@ -11,12 +11,14 @@ var localized string GroupHeader;
 `MCM_API_AutoIndexDropdownVars(ShowStatCurrent);
 `MCM_API_AutoCheckboxVars(ShowStatDelta);
 `MCM_API_AutoCheckboxVars(ShowEquipmentBonus);
+`MCM_API_AutoCheckboxVars(MarkStatsModifiedByPCS);
 
 `include(NewPromotionStats\Src\ModConfigMenuAPI\MCM_API_CfgHelpers.uci)
 
 `MCM_API_AutoIndexDropdownFns(ShowStatCurrent);
 `MCM_API_AutoCheckboxFns(ShowStatDelta);
 `MCM_API_AutoCheckboxFns(ShowEquipmentBonus);
+`MCM_API_AutoCheckboxFns(MarkStatsModifiedByPCS);
 
 event OnInit(UIScreen Screen)
 {
@@ -41,6 +43,7 @@ simulated function ClientModCallback(MCM_API_Instance ConfigAPI, int GameMode)
 	`MCM_API_AutoAddIndexDropdown(Group, ShowStatCurrent);
 	`MCM_API_AutoAddCheckbox(Group, ShowStatDelta);
 	`MCM_API_AutoAddCheckbox(Group, ShowEquipmentBonus);
+	`MCM_API_AutoAddCheckbox(Group, MarkStatsModifiedByPCS);
 
 	Page.ShowSettings();
 }
@@ -50,6 +53,7 @@ simulated function LoadSavedSettings()
 	ShowStatCurrent = `GETMCMVAR(ShowStatCurrent);
 	ShowStatDelta = `GETMCMVAR(ShowStatDelta);
 	ShowEquipmentBonus = `GETMCMVAR(ShowEquipmentBonus);
+	MarkStatsModifiedByPCS = `GETMCMVAR(MarkStatsModifiedByPCS);
 }
 
 simulated function ResetButtonClicked(MCM_API_SettingsPage Page)
@@ -57,6 +61,7 @@ simulated function ResetButtonClicked(MCM_API_SettingsPage Page)
 	`MCM_API_AutoIndexReset(ShowStatCurrent);
 	`MCM_API_AutoReset(ShowStatDelta);
 	`MCM_API_AutoReset(ShowEquipmentBonus);
+	`MCM_API_AutoReset(MarkStatsModifiedByPCS);
 }
 
 simulated function SaveButtonClicked(MCM_API_SettingsPage Page)
