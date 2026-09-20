@@ -1,5 +1,7 @@
 class UIHeroPromotionStats extends UIPanel config(NewPromotionStats);
 
+`include(NewPromotionStats\Src\ModConfigMenuAPI\MCM_API_CfgHelpers.uci)
+
 struct StatsPositionProfile
 {
 	var name ProfileName;
@@ -25,10 +27,6 @@ var config array<StatsDisplayMapping> DisplayMappings;
 
 var config array<ECharStatType> StatsToShow;
 var config array<ECharStatType> StatsWithCurrent;
-
-var config int ShowStatCurrent;
-var config bool ShowStatDelta;
-var config bool ShowEquipmentBonus;
 
 var UIPanel BG;
 var UIX2PanelHeader Header;
@@ -254,7 +252,7 @@ simulated function string FormatStatCurrent(ECharStatType Stat)
 	Current = GetStatCurrent(Stat);
 
 	// Never show
-	if (default.ShowStatCurrent == 0)
+	if (`GETMCMVAR(ShowStatCurrent) == 0)
 	{
 		return "";
 	}
@@ -266,7 +264,7 @@ simulated function string FormatStatCurrent(ECharStatType Stat)
 	}
 
 	// Always show
-	if (default.ShowStatCurrent == 1)
+	if (`GETMCMVAR(ShowStatCurrent) == 1)
 	{
 		return Current $ "/";
 	}
@@ -285,7 +283,7 @@ simulated function string FormatStatDelta(ECharStatType Stat)
 {
 	local int Delta;
 
-	if (!default.ShowStatDelta)
+	if (!`GETMCMVAR(ShowStatDelta))
 	{
 		return "";
 	}
@@ -309,7 +307,7 @@ simulated function string FormatEquipmentBonus(ECharStatType Stat)
 {
 	local int Bonus;
 
-	if (!default.ShowEquipmentBonus)
+	if (!`GETMCMVAR(ShowEquipmentBonus))
 	{
 		return "";
 	}

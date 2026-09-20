@@ -1,0 +1,16 @@
+[NewPromotionStats_MCMScreen]
+ModName="Stats on New Promotion Screen"
+PageTitle="Stats on New Promotion Screen"
+GroupHeader="General Settings"
+
+ShowStatCurrent_Label="Show stat current"
+ShowStatCurrent_Tip="Whether the current HP and Will should be shown."
+ShowStatCurrent_Strings[0]="Always"
+ShowStatCurrent_Strings[1]="Never"
+ShowStatCurrent_Strings[2]="If not max"
+
+ShowStatDelta_Label="Show stat delta"
+ShowStatDelta_Tip="Whether stat deltas, i.e. differences against normal stat growth (such as from Not Created Equally or Hidden Potential) should be shown."
+
+ShowEquipmentBonus_Label="Show equipment bonus"
+ShowEquipmentBonus_Tip="Whether the stat bonuses from equipment should be shown."
