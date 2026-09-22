@@ -1,6 +1,6 @@
 [NewPromotionStats_MCMScreen]
-ModName="Stats on New Promotion Screen"
-PageTitle="Stats on New Promotion Screen"
+ModName="Stats on New Promotion Screen+"
+PageTitle="Stats on New Promotion Screen+"
 GroupHeader="General Settings"
 
 ShowStatCurrent_Label="Show stat current"
