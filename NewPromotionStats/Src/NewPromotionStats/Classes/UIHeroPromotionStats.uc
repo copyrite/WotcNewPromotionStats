@@ -1,4 +1,4 @@
-class UIHeroPromotionStats extends UIPanel config(NewPromotionStats);
+class UIHeroPromotionStats extends UIPanel config(UI);
 
 `include(NewPromotionStats\Src\ModConfigMenuAPI\MCM_API_CfgHelpers.uci)
 
